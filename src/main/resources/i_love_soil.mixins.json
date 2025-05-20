@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.eve.i_love_soil.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "i_love_soil.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
