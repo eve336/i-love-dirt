@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "layers=1": {
+      "model": "i_love_soil:block/humus"
+    },
+    "layers=2": {
+      "model": "i_love_soil:block/humus/humus_height4"
+    },
+    "layers=3": {
+      "model": "i_love_soil:block/humus/humus_height6"
+    },
+    "layers=4": {
+      "model": "i_love_soil:block/humus/humus_height8"
+    },
+    "layers=5": {
+      "model": "i_love_soil:block/humus/humus_height10"
+    },
+    "layers=6": {
+      "model": "i_love_soil:block/humus/humus_height12"
+    },
+    "layers=7": {
+      "model": "i_love_soil:block/humus/humus_height14"
+    },
+    "layers=8": {
+      "model": "i_love_soil:block/humus/humus_full"
+    }
+  }
+}

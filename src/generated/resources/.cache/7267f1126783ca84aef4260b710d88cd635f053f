@@ -1,0 +1,15 @@
+// 1.20.1	2025-05-24T23:02:12.7781315	Registrate Provider for i_love_soil [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+bbc972ffb66a265abc80617a882b05168ce34cf0 assets/i_love_soil/blockstates/test_tree.json
+d168ee2ad8212386cbe85a3e0ecf44c07ea4c1eb assets/i_love_soil/lang/en_ud.json
+3ed722f022502b17ef394b2e64ba9078468d3d07 assets/i_love_soil/lang/en_us.json
+fc960bf70df930930ab68e769cb0d288793632a8 assets/i_love_soil/models/block/test_tree.json
+a4e7234c6bef74ea6d706844be401ad18f1f2335 assets/i_love_soil/models/item/humus.json
+a36325b1c7be2b8204365a0802325bb8dbb90b35 assets/i_love_soil/models/item/leaf_litter.json
+614a01331854b0f39fa0bf6bc96da61b793e8ec1 assets/i_love_soil/models/item/partially_decomposed_leaves.json
+541e3c92ae7515f49e9177d385c3a74738d6022e assets/i_love_soil/models/item/ph_strip.json
+76c76e29c50145d6e7ecc450da87ac0564800102 assets/i_love_soil/models/item/test_tree.json
+bd6078207befa40df7e36c1fe82990675835749c data/i_love_soil/loot_tables/blocks/humus.json
+f858fed7cc2931ba8843d8bd60d84bce51609f73 data/i_love_soil/loot_tables/blocks/leaf_litter.json
+7875c22da554fd473ba16e522e19348c7da91254 data/i_love_soil/loot_tables/blocks/partially_decomposed_leaves.json
+9a016eac0c91db7990201d6f8d77a8bff526eae9 data/i_love_soil/loot_tables/blocks/test_tree.json
+fd68e663ddbe452050d9cec3b1d160bdb4ee6f65 data/minecraft/tags/blocks/saplings.json
