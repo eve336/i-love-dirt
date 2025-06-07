@@ -3,18 +3,22 @@ package org.eve.i_love_soil;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.food.FoodProperties;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -29,10 +33,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.eve.i_love_soil.common.data.ILSBlocks;
+import org.eve.i_love_soil.common.ILSBiomeData;
 import org.eve.i_love_soil.common.data.ILSItems;
+import org.eve.i_love_soil.datagen.provider.server.BiomeStatsProvider;
 import org.slf4j.Logger;
 
-import java.util.function.Supplier;
+
+import java.util.function.BiConsumer;
 
 import static org.eve.i_love_soil.common.data.ILSItems.*;
 
@@ -43,7 +50,7 @@ public class ILoveSoil {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "i_love_soil";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "i_love_soil" namespace
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     // Create a Deferred Register to hold Items which will all be registered under the "i_love_soil" namespace
@@ -69,6 +76,7 @@ public class ILoveSoil {
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        MinecraftForge.EVENT_BUS.addListener(ILoveSoil::onAddReloadListener);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
@@ -85,6 +93,14 @@ public class ILoveSoil {
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        modEventBus.addListener(this::gatherData);
+    }
+
+    public void gatherData(GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+        generator.addProvider(event.includeServer(), new BiomeStatsProvider(packOutput));
     }
 
     public static void init(){
@@ -107,6 +123,14 @@ public class ILoveSoil {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
       //  if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) event.accept((Supplier<? extends ItemLike>) ILSBlocks.testTree);
+    }
+
+    public static void onAddReloadListener(AddReloadListenerEvent event) {
+        ILoveSoil.onAddReloadListenerTwo((id, listener) -> event.addListener(listener));
+    }
+
+    public static void onAddReloadListenerTwo(BiConsumer<ResourceLocation, PreparableReloadListener> registry) {
+        registry.accept(new ResourceLocation(ILoveSoil.MODID, "biome_stats"), new ILSBiomeData());
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

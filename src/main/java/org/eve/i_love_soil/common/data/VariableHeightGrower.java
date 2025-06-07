@@ -32,10 +32,10 @@ public class VariableHeightGrower extends AbstractTreeGrower {
     int maxHeight;
     int xySpacing;
 
-    public VariableHeightGrower(ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureResourceKey, int min, int max, int xySpacing){
+    public VariableHeightGrower(ResourceKey<ConfiguredFeature<?, ?>> configuredFeatureResourceKey, int minHeight, int maxHeight, int xySpacing){
         this.resourceKey = configuredFeatureResourceKey;
-        this.minHeight = min;
-        this.maxHeight = max;
+        this.minHeight = minHeight;
+        this.maxHeight = maxHeight;
         this.xySpacing = xySpacing;
     }
 
@@ -45,66 +45,6 @@ public class VariableHeightGrower extends AbstractTreeGrower {
         //return TreeFeatures.OAK;
         return resourceKey;
     }
-
-//    @Override
-//    public boolean growTree(ServerLevel pLevel, ChunkGenerator pGenerator, BlockPos pPos, BlockState pState, RandomSource pRandom) {
-//        ResourceKey<ConfiguredFeature<?, ?>> resourcekey = this.getConfiguredFeature(pRandom, this.hasFlowers(pLevel, pPos));
-//        if (resourcekey == null) {
-//            return false;
-//        } else {
-//            Holder<ConfiguredFeature<?, ?>> holder = pLevel.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
-//            var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(pLevel, pRandom, pPos, holder);
-//            holder = event.getFeature();
-//            if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
-//            if (holder == null) {
-//                return false;
-//            } else {
-//                ConfiguredFeature<?, ?> configuredfeature = holder.value();
-//                BlockState blockstate = pLevel.getFluidState(pPos).createLegacyBlock();
-//                var config = configuredfeature.config();
-//                Field[] fields = config.getClass().getDeclaredFields();
-//                for (int i = 0; i < fields.length; i++) {
-//                    if (fields[i].getName().equals("trunkPlacer")){
-//                        try {
-//                            Field[] fields1 = fields[i].get(config).getClass().getSuperclass().getDeclaredFields();
-//                            for (int j = 0; j < fields1.length; j++) {
-//                                if (fields1[j].getName().equals("baseHeight")){
-//                                    fields1[j].setAccessible(true);
-//                                    Field modifiersField = Field.class.getDeclaredField("modifiers");
-//                                    modifiersField.setAccessible(true);
-//                                    modifiersField.setInt(fields1[j], fields1[j].getModifiers() & ~Modifier.FINAL);
-//                                    System.out.println(fields1[j].getInt(config));
-//                                    fields1[j].setInt(config, 20);
-//
-//                                    //config.getClass().getDeclaredField("trunkPlacer").get(config).getClass().getSuperclass().getDeclaredField("baseHeight").set
-//                                }
-//                            }
-//                        } catch (IllegalAccessException | NoSuchFieldException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
-//
-//                try {
-//                    configuredfeature.getClass().getDeclaredField("config").set(configuredfeature, config);
-//                } catch (IllegalAccessException | NoSuchFieldException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//                pLevel.setBlock(pPos, blockstate, 4);
-//                if (configuredfeature.place(pLevel, pGenerator, pRandom, pPos)) {
-//                    if (pLevel.getBlockState(pPos) == blockstate) {
-//                        pLevel.sendBlockUpdated(pPos, pState, blockstate, 2);
-//                    }
-//
-//                    return true;
-//                } else {
-//                    pLevel.setBlock(pPos, pState, 4);
-//                    return false;
-//                }
-//            }
-//        }
-//    }
 
     public boolean canSeeSun(Level world, BlockPos blockPos){
         BlockPos blockPos1 = blockPos;
@@ -118,7 +58,7 @@ public class VariableHeightGrower extends AbstractTreeGrower {
     }
 
 
-    // todo i might add some randomness to this, make it return early if there is like more than 70% sunlight
+    // todo i might add some randomness to this and/or make it return early if there is like more than 70% sunlight
     @Override
     public boolean growTree(ServerLevel pLevel, ChunkGenerator pGenerator, BlockPos pPos, BlockState pState, RandomSource pRandom) {
         //return super.growTree(pLevel, pGenerator, pPos, pState, pRandom);

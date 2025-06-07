@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "i_love_soil.refmap.json",
   "mixins": [
+    "SaplingsMixin"
   ],
   "client": [
   ],

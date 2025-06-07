@@ -14,7 +14,6 @@ public class pHStripItem extends Item {
         super(pProperties);
     }
 
-
 //    @Override
 //    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 //        //return super.use(pLevel, pPlayer, pUsedHand);
@@ -22,7 +21,6 @@ public class pHStripItem extends Item {
 //            LevelChunk chunk = pLevel.getChunkAt(
 //        }
 //    }
-
 
     @Override
     public InteractionResult useOn(UseOnContext pContext) {

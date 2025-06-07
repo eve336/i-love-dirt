@@ -1,11 +1,15 @@
 package org.eve.i_love_soil;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.List;
+
 public class SoilChunkData implements ISoilCapability, INBTSerializable<CompoundTag> {
-    private int water = 0;
+    public int water = 0;
     private float pH = 7;
+
     @Override
     public int getWater() {
         return water;
@@ -15,6 +19,12 @@ public class SoilChunkData implements ISoilCapability, INBTSerializable<Compound
     public void addWater(int value) {
         this.water = this.water + value;
     }
+
+    @Override
+    public void setWater(int value) {
+        this.water = value;
+    }
+
 
     @Override
     public float getpH() {

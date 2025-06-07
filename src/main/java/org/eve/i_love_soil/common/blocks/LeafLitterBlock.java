@@ -15,10 +15,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.eve.i_love_soil.ILSCapabilities;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -98,9 +100,15 @@ public class LeafLitterBlock extends Block implements LeafLitter {
 //    }
 
     public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
-        //this.onRandomTick(pState, pLevel, pPos, pRandom);
-        var chunk = pLevel.getChunkAt(pPos);
-        this.applyChangeOverTime(pState, pLevel, pPos, pRandom);
+        float ran = pRandom.nextFloat();
+        float decompositionChance = 0.3f;
+        LevelChunk chunk = pLevel.getChunkAt(pPos);
+        chunk.getCapability(ILSCapabilities.SOIL_CHUNK_DATA_CAPABILITY).ifPresent(data -> {
+            float pH = data.getpH();
+            if (pH < 5 || pH > 8) return;
+            if (ran > decompositionChance) return;
+            this.applyChangeOverTime(pState, pLevel, pPos, pRandom);
+        });
     }
 
 
