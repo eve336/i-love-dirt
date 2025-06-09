@@ -11,13 +11,17 @@ import org.eve.i_love_soil.ILoveSoil;
 public record BiomeStats(
         ResourceKey<Biome> biome,
         // int temp?
-        int water
+        int water,
+        float pH,
+        int nutrients
 ) {
 
     //public static final ResourceKey<Biome> DESERT = ResourceKey.create(Registries.BIOME, new ResourceLocation(ILoveSoil.MODID, "DESERT"));
 
     public static final Codec<BiomeStats> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceKey.codec(Registries.BIOME).fieldOf("biome").forGetter(BiomeStats::biome),
-            Codec.INT.fieldOf("water").forGetter(BiomeStats::water)
+            Codec.INT.fieldOf("water").forGetter(BiomeStats::water),
+            Codec.FLOAT.fieldOf("pH").forGetter(BiomeStats::pH),
+            Codec.INT.fieldOf("nutrients").forGetter(BiomeStats::nutrients)
     ).apply(instance, BiomeStats::new));
 }

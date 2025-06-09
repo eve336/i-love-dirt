@@ -1,13 +1,9 @@
 package org.eve.i_love_soil;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 
-import java.util.List;
-import java.util.Map;
-
-//@AutoRegisterCapability
-public interface ISoilCapability {
+@AutoRegisterCapability
+public interface ISoilCapability  {
 
     int getWater();
 
@@ -18,5 +14,13 @@ public interface ISoilCapability {
     float getpH();
 
     void changePH(float value);
+
+    void setPH(float value);
+
+    void setNutrients(int value);
+
+    void addNutrients(int value);
+
+    int getNutrients();
 
 }
