@@ -20,12 +20,6 @@ public class WindRegion {
         return new WindRegion(pos.getX() / boxSize, pos.getZ() / boxSize);
     }
 
-    public static WindRegion fromXZ(int x, int z) {
-        // basically dividing by 64?
-        //return new WindRegion(pos.getX() >> 6, pos.getZ() >> 6);
-        return new WindRegion(x / boxSize, z / boxSize);
-    }
-
     public long toLong() {
         // bitwise or
         // returns 1 if either bit is 0 or 1, else 0
@@ -35,8 +29,8 @@ public class WindRegion {
         return (((long) rx) << 32) | (rz & 0xFFFFFFFFL);
     }
 
-    public BlockPos blockPos(long value){
-        return null;
+    public BlockPos blockPos(){
+        return new BlockPos(rx, 0, rz);
     }
 
     public static int getBoxSize() {

@@ -24,7 +24,7 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
     Map<Long, Vec3> regionWind = new HashMap<>();
 
     // might be a good idea to store this somewhere else but this is convenient
-    List<Long> loadedRegions = new ArrayList<>();
+    List<WindRegion> loadedRegions = new ArrayList<>();
 
     Map<WindRegion, Integer> regionLoadedness = new HashMap<>();
 
@@ -38,9 +38,8 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
 
     @Override
     public void updateWind() {
-        loadedRegions.forEach(region -> {
-            Vec3 vec = new Vec3(0, 0 ,0);
-            regionWind.put(region, vec);
+        loadedRegions.forEach(windRegion -> {
+
         });
     }
 
@@ -55,13 +54,19 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
         regionLoadedness.put(windRegion, loadedNum + 1);
         if (loadedNum == 0){
             // updateRegion(windRegion)
+            loadedRegions.add(windRegion);
         }
     }
 
     @Override
     public void removeLoaded(WindRegion windRegion) {
+        // region with 1 load will go to 0 (nothing loading it)
+        // region with 2 loads (eg spanning 2 chunks) will go to 1
         int loadedNum = regionLoadedness.getOrDefault(windRegion, 0);
         regionLoadedness.put(windRegion, Math.max(0, loadedNum - 1));
+        if (loadedNum - 1 == 0){
+            loadedRegions.remove(windRegion);
+        }
     }
 
     @Override

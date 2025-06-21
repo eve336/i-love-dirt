@@ -53,29 +53,32 @@ public class ChunkEvents {
 
     @SubscribeEvent
     public static void ChunkLoadEventWind(ChunkEvent.Load event){
-        System.out.println("chunk start loading");
+        //System.out.println("chunk start loading");
         LevelChunk chunk = (LevelChunk) event.getChunk();
-        BlockPos pos = chunk.getPos().getWorldPosition();
+        //BlockPos pos = chunk.getPos().getWorldPosition();
         Level level = (Level) event.getLevel();
-        float box = WindRegion.getBoxSize();
-        float m = chunk.getPos().x;
-        float n = chunk.getPos().z;
+//        int box = WindRegion.getBoxSize();
+//        int m = chunk.getPos().x;
+//        int n = chunk.getPos().z;
+//
+//        int worldChunkX = 16 * m;
+//        int worldChunkZ = 16 * n;
+//
+//        int blackX = (int) (Math.ceil( (float) worldChunkX / box) * box);
+//        int blackZ = (int) (Math.ceil( (float) worldChunkZ / box) * box);
+//
+//
+//        for (int i = blackX; i >= worldChunkX && i <= worldChunkX + 16; i = i + box) {
+//            for (int j = blackZ; j >= worldChunkZ && j <= worldChunkZ + 16; j = j + box) {
+//                System.out.println(i + " , " + j);
+//                WindRegion windRegion = new WindRegion(i ,j);
+//                level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
+//                    data.addLoaded(windRegion);
+//                });
+//            }
+//        }
 
-        int worldChunkX = (int) (16 * m);
-        int worldChunkZ = (int) (16 * n);
-
-        int blackX = (int) (Math.ceil(worldChunkX / box) * box);
-        int blackZ = (int) (Math.ceil(worldChunkZ / box) * box);
-
-        for (int i = blackX; i > worldChunkX && i < worldChunkX + 16; i = (int) (i + box)) {
-            for (int j = blackZ; j > worldChunkZ && j < worldChunkZ + 16; j = (int) (j + box)) {
-                System.out.println(i + " , " + j);
-                WindRegion windRegion = WindRegion.fromXZ(i, j);
-                level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-                    data.addLoaded(windRegion);
-                });
-            }
-        }
+        WindChunkLoading(level, chunk, true);
 
 //        if (blackX > worldChunkX && blackX < worldChunkX + 16
 //        && blackZ > worldChunkZ && blackZ < worldChunkZ + 16){
@@ -83,7 +86,7 @@ public class ChunkEvents {
 //            //blackX = (int) (blackX + box);
 //            //blackZ = (int) (blackZ + box);
 //        }
-        System.out.println("chunk finished loading");
+        //System.out.println("chunk finished loading");
     }
 
     @SubscribeEvent
@@ -95,6 +98,9 @@ public class ChunkEvents {
 //        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
 //            data.removeLoaded(windRegion.toLong());
 //        });
+        LevelChunk chunk = (LevelChunk) event.getChunk();
+        Level level = (Level) event.getLevel();
+        WindChunkLoading(level, chunk, false);
     }
 
     static int timer = 0;
@@ -114,5 +120,32 @@ public class ChunkEvents {
 
     public static void playertick(TickEvent.PlayerTickEvent event){
         Player player = event.player;
+    }
+
+    static void WindChunkLoading(Level level, LevelChunk chunk, boolean Loaded){
+        int box = WindRegion.getBoxSize();
+        int m = chunk.getPos().x;
+        int n = chunk.getPos().z;
+
+        int worldChunkX = 16 * m;
+        int worldChunkZ = 16 * n;
+
+        int blackX = (int) (Math.ceil( (float) worldChunkX / box) * box);
+        int blackZ = (int) (Math.ceil( (float) worldChunkZ / box) * box);
+
+        for (int i = blackX; i >= worldChunkX && i <= worldChunkX + 16; i = i + box) {
+            for (int j = blackZ; j >= worldChunkZ && j <= worldChunkZ + 16; j = j + box) {
+                //System.out.println(i + " , " + j);
+                if (!Loaded) System.out.println("unloaded " + i + "," + j);
+                WindRegion windRegion = new WindRegion(i ,j);
+                level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
+                    if (Loaded) {
+                        data.addLoaded(windRegion);
+                    }
+                    else data.removeLoaded(windRegion);
+                });
+            }
+        }
+
     }
 }
