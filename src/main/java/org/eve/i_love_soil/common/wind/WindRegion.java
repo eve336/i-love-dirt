@@ -7,6 +7,7 @@ public class WindRegion {
     int rx;
     int rz;
 
+    // todo config
     public static int boxSize = 50;
 
     public WindRegion(int x, int z) {
@@ -33,7 +34,7 @@ public class WindRegion {
         return new BlockPos(rx, 0, rz);
     }
 
-    public static int getBoxSize() {
-        return boxSize;
-    }
+//    public static int getBoxSize() {
+//        return boxSize;
+//    }
 }

@@ -78,7 +78,7 @@ public class ChunkEvents {
 //            }
 //        }
 
-        WindChunkLoading(level, chunk, true);
+        WindRegionLoading(level, chunk, true);
 
 //        if (blackX > worldChunkX && blackX < worldChunkX + 16
 //        && blackZ > worldChunkZ && blackZ < worldChunkZ + 16){
@@ -100,7 +100,7 @@ public class ChunkEvents {
 //        });
         LevelChunk chunk = (LevelChunk) event.getChunk();
         Level level = (Level) event.getLevel();
-        WindChunkLoading(level, chunk, false);
+        WindRegionLoading(level, chunk, false);
     }
 
     static int timer = 0;
@@ -122,8 +122,8 @@ public class ChunkEvents {
         Player player = event.player;
     }
 
-    static void WindChunkLoading(Level level, LevelChunk chunk, boolean Loaded){
-        int box = WindRegion.getBoxSize();
+    static void WindRegionLoading(Level level, LevelChunk chunk, boolean Loaded){
+        int box = WindRegion.boxSize;
         int m = chunk.getPos().x;
         int n = chunk.getPos().z;
 
@@ -133,10 +133,12 @@ public class ChunkEvents {
         int blackX = (int) (Math.ceil( (float) worldChunkX / box) * box);
         int blackZ = (int) (Math.ceil( (float) worldChunkZ / box) * box);
 
-        for (int i = blackX; i >= worldChunkX && i <= worldChunkX + 16; i = i + box) {
-            for (int j = blackZ; j >= worldChunkZ && j <= worldChunkZ + 16; j = j + box) {
+        // first one is >= so it INCLUDES the left of the chunk, such as including 0
+        // second one is just < so it DOESNT include the right of the chunk, so theres no overlap
+        for (int i = blackX; i >= worldChunkX && i < worldChunkX + 16; i = i + box) {
+            for (int j = blackZ; j >= worldChunkZ && j < worldChunkZ + 16; j = j + box) {
                 //System.out.println(i + " , " + j);
-                if (!Loaded) System.out.println("unloaded " + i + "," + j);
+                if (!Loaded) System.out.println("unloaded " + i + "," + j + " at chunk " + m + "," + n);
                 WindRegion windRegion = new WindRegion(i ,j);
                 level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
                     if (Loaded) {

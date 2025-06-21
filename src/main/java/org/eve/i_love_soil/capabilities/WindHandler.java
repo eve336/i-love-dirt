@@ -39,7 +39,11 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
     @Override
     public void updateWind() {
         loadedRegions.forEach(windRegion -> {
-
+            BlockPos blockPos = windRegion.blockPos();
+            int minX = blockPos.getX();
+            int minZ = blockPos.getZ();
+            int maxX = minX + WindRegion.boxSize;
+            int maxZ = minZ + WindRegion.boxSize;
         });
     }
 
