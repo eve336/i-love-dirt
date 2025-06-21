@@ -4,10 +4,8 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ChangeOverTimeBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.eve.i_love_soil.common.data.ILSBlocks;
+import org.eve.i_love_soil.common.data.blocks.ILSBlocks;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -35,6 +33,6 @@ public interface LeafLitter extends ChangeOverTimeLeaves<LeafLitter.DecomposingS
     enum DecomposingState {
         LEAVES,
         PARTIALLY_DECOMPOSED,
-        HUMUS;
+        HUMUS
     }
 }

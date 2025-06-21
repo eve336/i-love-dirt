@@ -2,6 +2,6 @@
   "block.i_love_soil.humus": "Humus",
   "block.i_love_soil.leaf_litter": "Leaf litter",
   "block.i_love_soil.partially_decomposed_leaves": "Partially Decomposed Leaves",
-  "block.i_love_soil.test_tree": "Test Sapling",
+  "item.i_love_soil.fertiliser": "Fertiliser",
   "item.i_love_soil.ph_strip": "Ph Strip"
 }

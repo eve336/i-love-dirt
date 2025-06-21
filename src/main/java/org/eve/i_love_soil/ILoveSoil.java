@@ -32,10 +32,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.eve.i_love_soil.common.data.ILSBlocks;
+import org.eve.i_love_soil.common.ILSCropData;
+import org.eve.i_love_soil.common.data.blocks.ILSBlocks;
 import org.eve.i_love_soil.common.ILSBiomeData;
 import org.eve.i_love_soil.common.data.ILSItems;
 import org.eve.i_love_soil.datagen.provider.server.BiomeStatsProvider;
+import org.eve.i_love_soil.datagen.provider.server.CropDataProvider;
 import org.slf4j.Logger;
 
 
@@ -101,6 +103,7 @@ public class ILoveSoil {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         generator.addProvider(event.includeServer(), new BiomeStatsProvider(packOutput));
+        generator.addProvider(event.includeServer(), new CropDataProvider(packOutput));
     }
 
     public static void init(){
@@ -131,6 +134,8 @@ public class ILoveSoil {
 
     public static void onAddReloadListenerTwo(BiConsumer<ResourceLocation, PreparableReloadListener> registry) {
         registry.accept(new ResourceLocation(ILoveSoil.MODID, "biome_stats"), new ILSBiomeData());
+        registry.accept(new ResourceLocation(ILoveSoil.MODID, "crop_data"), new ILSCropData());
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

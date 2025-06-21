@@ -1,0 +1,102 @@
+package org.eve.i_love_soil.capabilities;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
+import org.eve.i_love_soil.common.wind.WindRegion;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class WindHandler implements IWindCapability, ICapabilitySerializable<CompoundTag> {
+    final WindHandler instance = this;
+    final LazyOptional<IWindCapability> optional = LazyOptional.of(() -> instance);
+
+    Map<Long, Vec3> regionWind = new HashMap<>();
+
+    // might be a good idea to store this somewhere else but this is convenient
+    List<Long> loadedRegions = new ArrayList<>();
+
+    Map<WindRegion, Integer> regionLoadedness = new HashMap<>();
+
+    // useful for when you know the coords and want to get the wind, say to apply to a player, or to leaves
+    @Override
+    public Vec3 getWindAt(BlockPos blockPos) {
+        WindRegion windRegion = WindRegion.fromBlockPos(blockPos);
+        //return regionWind.getOrDefault(windRegion.toLong(), Vec3.ZERO);
+        return regionWind.get(windRegion.toLong());
+    }
+
+    @Override
+    public void updateWind() {
+        loadedRegions.forEach(region -> {
+            Vec3 vec = new Vec3(0, 0 ,0);
+            regionWind.put(region, vec);
+        });
+    }
+
+    @Override
+    public void addLoaded(WindRegion windRegion) {
+        // update for individual chunk?
+//        double x = Math.random();
+//        double z = Math.random();
+//        Vec3 vec = new Vec3(x, 0, z);
+//        regionWind.put(value, vec);
+        int loadedNum = regionLoadedness.getOrDefault(windRegion, 0);
+        regionLoadedness.put(windRegion, loadedNum + 1);
+        if (loadedNum == 0){
+            // updateRegion(windRegion)
+        }
+    }
+
+    @Override
+    public void removeLoaded(WindRegion windRegion) {
+        int loadedNum = regionLoadedness.getOrDefault(windRegion, 0);
+        regionLoadedness.put(windRegion, Math.max(0, loadedNum - 1));
+    }
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        return ILSCapabilities.WIND_CAPABILITY.orEmpty(cap, optional);
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        ListTag listTag = new ListTag();
+        for (Map.Entry<Long, Vec3> entry : regionWind.entrySet()){
+            CompoundTag windTag = new CompoundTag();
+            windTag.putLong("region", entry.getKey());
+            Vec3 vec = entry.getValue();
+            windTag.putDouble("x", vec.x);
+            windTag.putDouble("z", vec.z);
+
+            listTag.add(windTag);
+        }
+        tag.put("windList", listTag);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        ListTag listTag = nbt.getList("windList", ListTag.TAG_COMPOUND);
+        listTag.forEach(baseTag -> {
+            CompoundTag windTag = (CompoundTag) baseTag;
+            long region = windTag.getLong("region");
+            int x = windTag.getInt("x");
+            int z = windTag.getInt("z");
+            // might add y someday but i dont care for the moment
+            Vec3 vec = new Vec3(x, 0, z);
+            regionWind.put(region, vec);
+        });
+    }
+}

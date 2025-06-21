@@ -1,0 +1,9 @@
+{
+  "block": "minecraft:wheat",
+  "maxPH": 6.5,
+  "maxWater": 5000,
+  "minNutrients": 100,
+  "minPH": 5.5,
+  "minWater": 100,
+  "nutrientUsage": 10
+}

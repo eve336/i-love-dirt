@@ -28,7 +28,7 @@ public class BiomeStatsProvider extends ModCodecProvider<BiomeStats> {
         // maybe make it slightly acidic, idk probably just make it whatever for gameplay reasons
         System.out.println(DESERT.location().getPath());
         // deserts
-        // water content is soil water content, taiga has a load bc of soil stuff
+        // minWater content is soil minWater content, taiga has a load bc of soil stuff
         List<ResourceKey<Biome>> desertList = List.of(DESERT, BADLANDS, ERODED_BADLANDS);
         desertList.forEach(a -> buildBiomeStats(consumer, a, 500, 7.3f, 0));
 

@@ -3,7 +3,7 @@ package org.eve.i_love_soil.mixin;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.grower.AbstractTreeGrower;
-import org.eve.i_love_soil.common.data.VariableHeightGrower;
+import org.eve.i_love_soil.common.blocks.VariableHeightGrower;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 

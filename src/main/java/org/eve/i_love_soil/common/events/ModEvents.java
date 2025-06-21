@@ -3,25 +3,69 @@ package org.eve.i_love_soil.common.events;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.eve.i_love_soil.ILSCapabilities;
+import org.eve.i_love_soil.capabilities.*;
 import org.eve.i_love_soil.ILoveSoil;
-import org.eve.i_love_soil.ISoilCapability;
-import org.eve.i_love_soil.SoilChunkData;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(modid = ILoveSoil.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ModEvents {
     private static final ResourceLocation CHUNK_DATA_ID = new ResourceLocation(ILoveSoil.MODID, "chunk_data");
 
+    private static final ResourceLocation WIND_DATA_ID = new ResourceLocation(ILoveSoil.MODID, "wind_data");
+
+    @SubscribeEvent
+    public static void attachChunkCapabilities(AttachCapabilitiesEvent<LevelChunk> event) {
+        //System.out.println(event.getObject().getPos());
+        event.addCapability(CHUNK_DATA_ID, new ICapabilitySerializable<CompoundTag>() {
+            final SoilChunkData instance = new SoilChunkData();
+            final LazyOptional<ISoilCapability> optional = LazyOptional.of(() -> instance);
+
+            @Override
+            public CompoundTag serializeNBT() {
+                return instance.serializeNBT();
+            }
+            @Override
+            public void deserializeNBT(CompoundTag nbt) {
+                instance.deserializeNBT(nbt);
+            }
+
+            @Override
+            public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+                return ILSCapabilities.SOIL_CHUNK_DATA_CAPABILITY.orEmpty(cap, optional);
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void attackLevelCapabilities(AttachCapabilitiesEvent<Level> event){
+        event.addCapability(WIND_DATA_ID, new ICapabilitySerializable<CompoundTag>() {
+            final WindHandler instance = new WindHandler();
+            final LazyOptional<IWindCapability> optional = LazyOptional.of(() -> instance);
+
+            @Override
+            public CompoundTag serializeNBT() {
+                return instance.serializeNBT();
+            }
+            @Override
+            public void deserializeNBT(CompoundTag nbt) {
+                instance.deserializeNBT(nbt);
+            }
+
+            @Override
+            public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                return ILSCapabilities.WIND_CAPABILITY.orEmpty(cap, optional);
+            }
+        });
+    }
 
 //    @SubscribeEvent
 //    public void onAttachingCapabilities(final AttachCapabilitiesEvent<LevelChunk> event) {
@@ -46,18 +90,18 @@ public class ModEvents {
 //            @Override
 //            public CompoundTag serializeNBT() {
 ////                CompoundTag tag = new CompoundTag();
-////                tag.putInt("water", water);
-////                tag.putFloat("pH", pH);
-////                tag.putInt("nutrients", nutrients);
+////                tag.putInt("minWater", minWater);
+////                tag.putFloat("minPH", minPH);
+////                tag.putInt("minNutrients", minNutrients);
 ////                return tag;
 //                return backend.serializeNBT();
 //            }
 //
 //            @Override
 //            public void deserializeNBT(CompoundTag nbt) {
-////                water = nbt.getInt("water");
-////                pH = nbt.getFloat("pH");
-////                nutrients = nbt.getInt("nutrients");
+////                minWater = nbt.getInt("minWater");
+////                minPH = nbt.getFloat("minPH");
+////                minNutrients = nbt.getInt("minNutrients");
 //                backend.deserializeNBT(nbt);
 //            }
 //
@@ -73,8 +117,8 @@ public class ModEvents {
 //        };
 //
 //        event.addCapability(CHUNK_DATA_ID, provider);
-//    }
 
+//    }
     // rework to be persistent
 //    @SubscribeEvent
 //    public static void attachChunkCapabilities(AttachCapabilitiesEvent<LevelChunk> event) {
@@ -88,30 +132,9 @@ public class ModEvents {
 //                return ILSCapabilities.SOIL_CHUNK_DATA_CAPABILITY.orEmpty(cap, optional);
 //            }
 //        });
+
 //    }
 
-    @SubscribeEvent
-    public static void attachChunkCapabilities(AttachCapabilitiesEvent<LevelChunk> event) {
-        //System.out.println(event.getObject().getPos());
-        event.addCapability(CHUNK_DATA_ID, new ICapabilitySerializable<CompoundTag>() {
-            final SoilChunkData instance = new SoilChunkData();
-            final LazyOptional<ISoilCapability> optional = LazyOptional.of(() -> instance);
-            
-            @Override
-            public CompoundTag serializeNBT() {
-                return instance.serializeNBT();
-            }
-            @Override
-            public void deserializeNBT(CompoundTag nbt) {
-                instance.deserializeNBT(nbt);
-            }
-
-            @Override
-            public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-                return ILSCapabilities.SOIL_CHUNK_DATA_CAPABILITY.orEmpty(cap, optional);
-            }
-        });
-    }
 
 //    @SubscribeEvent
 //    public static void onAddReloadListeners(AddReloadListenerEvent event) {

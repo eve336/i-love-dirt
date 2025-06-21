@@ -1,4 +1,4 @@
-package org.eve.i_love_soil;
+package org.eve.i_love_soil.capabilities;
 
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 

@@ -1,19 +1,12 @@
-package org.eve.i_love_soil;
+package org.eve.i_love_soil.capabilities;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class SoilChunkData implements ISoilCapability, ICapabilitySerializable<CompoundTag> {
     final SoilChunkData instance = this;
@@ -25,13 +18,11 @@ public class SoilChunkData implements ISoilCapability, ICapabilitySerializable<C
     @Override
     public int getWater() {
         return water;
-
     }
 
     @Override
     public void addWater(int value) {
         this.water = this.water + value;
-
     }
 
     @Override
@@ -62,6 +53,9 @@ public class SoilChunkData implements ISoilCapability, ICapabilitySerializable<C
     @Override
     public void addNutrients(int value) {
         this.nutrients = nutrients + value;
+        // uh this might get exploited lol
+        // idk if i need this but i dont want it to go negative
+        if (this.nutrients < 0) this.nutrients = 0;
     }
 
     @Override

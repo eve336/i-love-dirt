@@ -6,29 +6,27 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.eve.i_love_soil.ILSCapabilities;
+import org.eve.i_love_soil.capabilities.ILSCapabilities;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class LeafLitterBlock extends Block implements LeafLitter {
     private final LeafLitter.DecomposingState decomposingState;
     public static final int MAX_HEIGHT = 8;
     public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
+    public static final BooleanProperty NATURAL = BooleanProperty.create("natural");
     protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{Shapes.empty(), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
     public static final int HEIGHT_IMPASSABLE = 5;
 
@@ -49,6 +47,10 @@ public class LeafLitterBlock extends Block implements LeafLitter {
             default:
                 return false;
         }
+    }
+
+    public boolean isNatural(BlockState state) {
+        return state.getOptionalValue(NATURAL).orElse(false);
     }
 
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
@@ -73,6 +75,13 @@ public class LeafLitterBlock extends Block implements LeafLitter {
 
     public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
         return pState.getValue(LAYERS) == 8 ? 0.2F : 1.0F;
+    }
+
+    public BlockState changeNatural(BlockState state, boolean natural) {
+        if (state.is(this)) {
+            return state.setValue(NATURAL, natural);
+        }
+        return state;
     }
 
     /**
@@ -100,10 +109,25 @@ public class LeafLitterBlock extends Block implements LeafLitter {
 //    }
 
     public void randomTick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
+        if (!pState.getOptionalValue(NATURAL).orElse(false)) return;
         float ran = pRandom.nextFloat();
         float decompositionChance = 0.3f;
+        int layers = pState.getValue(LeafLitterBlock.LAYERS);
         LevelChunk chunk = pLevel.getChunkAt(pPos);
         chunk.getCapability(ILSCapabilities.SOIL_CHUNK_DATA_CAPABILITY).ifPresent(data -> {
+            LeafLitterBlock leafLitterBlock = (LeafLitterBlock) pState.getBlock();
+            // degrading
+            if (leafLitterBlock.decomposingState == DecomposingState.HUMUS) {
+                if (layers > 1) {
+                    pLevel.setBlockAndUpdate(pPos, pState.setValue(LeafLitterBlock.LAYERS, layers - 1));
+                } else if (layers == 1) {
+                    pLevel.removeBlock(pPos, false);
+                }
+                data.addNutrients(10);
+                return;
+            }
+
+            // conversion to humus
             float pH = data.getpH();
             if (pH < 5 || pH > 8) return;
             if (ran > decompositionChance) return;
@@ -154,4 +178,9 @@ public class LeafLitterBlock extends Block implements LeafLitter {
     public DecomposingState getAge() {
         return this.decomposingState;
     }
+
+//    @Override
+//    public List<ItemStack> getDrops(BlockState pState, LootParams.Builder pParams) {
+//        return super.getDrops(pState, pParams);
+//    }
 }
