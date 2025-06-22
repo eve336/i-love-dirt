@@ -160,6 +160,9 @@ repositories {
 
 dependencies {
 
+    implementation fg.deobf("curse.maven:spark-361579:4738952")
+
+    // do i really need this lmao
     implementation fg.deobf("curse.maven:resourceful-lib-570073:5659871")
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.

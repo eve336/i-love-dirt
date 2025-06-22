@@ -5,16 +5,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.eve.i_love_soil.capabilities.ILSCapabilities;
 import org.eve.i_love_soil.ILoveSoil;
+import org.eve.i_love_soil.capabilities.IWindCapability;
 import org.eve.i_love_soil.common.wind.WindRegion;
 
 import java.util.Optional;
@@ -107,20 +110,40 @@ public class ChunkEvents {
     @SubscribeEvent
     public static void Servertick(TickEvent.ServerTickEvent event){
         timer ++;
-        if (timer < 1000){
+        // 500 seconds
+        if (timer < 10000){
             return;
         }
         timer = 0;
         MinecraftServer server = event.getServer();
         ServerLevel level = server.getLevel(ServerLevel.OVERWORLD);
-        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-            data.updateWind();
-        });
+        if(level != null) {
+            level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(IWindCapability::updateWind);
+        }
     }
 
-    public static void playertick(TickEvent.PlayerTickEvent event){
-        Player player = event.player;
-    }
+//    static int timer2 = 0;
+//    @SubscribeEvent
+//    public static void playertick(TickEvent.PlayerTickEvent event){
+//        timer2 ++;
+//        if (timer2 < 20){
+//            return;
+//        }
+//        timer2 = 0;
+//        Player player = event.player;
+//        Level level = player.level();
+//        if (level.isClientSide()) return;
+//        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
+//            Vec3 vec = data.getWindAt(player.blockPosition());
+//            //player.move(MoverType.PLAYER, vec);
+//            //player.travel();
+//            //player.push(vec.x, 0 , vec.y);
+//            System.out.println("player push vec: " + vec);
+//            player.setDeltaMovement(vec);
+//            //player.addDeltaMovement(vec);
+//            //System.out.println(vec.x + "," + vec.z);
+//        });
+//    }
 
     static void WindRegionLoading(Level level, LevelChunk chunk, boolean Loaded){
         int box = WindRegion.boxSize;
@@ -138,7 +161,7 @@ public class ChunkEvents {
         for (int i = blackX; i >= worldChunkX && i < worldChunkX + 16; i = i + box) {
             for (int j = blackZ; j >= worldChunkZ && j < worldChunkZ + 16; j = j + box) {
                 //System.out.println(i + " , " + j);
-                if (!Loaded) System.out.println("unloaded " + i + "," + j + " at chunk " + m + "," + n);
+                //if (!Loaded) System.out.println("unloaded " + i + "," + j + " at chunk " + m + "," + n);
                 WindRegion windRegion = new WindRegion(i ,j);
                 level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
                     if (Loaded) {

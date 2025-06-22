@@ -26,14 +26,22 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
     // might be a good idea to store this somewhere else but this is convenient
     List<WindRegion> loadedRegions = new ArrayList<>();
 
-    Map<WindRegion, Integer> regionLoadedness = new HashMap<>();
+    Map<WindRegion, Integer> regionLoadedNumber = new HashMap<>();
 
     // useful for when you know the coords and want to get the wind, say to apply to a player, or to leaves
     @Override
     public Vec3 getWindAt(BlockPos blockPos) {
-        WindRegion windRegion = WindRegion.fromBlockPos(blockPos);
-        //return regionWind.getOrDefault(windRegion.toLong(), Vec3.ZERO);
+        //WindRegion windRegion = WindRegion.fromBlockPos(blockPos);
+        WindRegion windRegion = new WindRegion(blockPos.getX(), blockPos.getZ());
+        var longey = windRegion.toLong();
+        if (regionWind.get(windRegion.toLong()) == null) {
+            System.out.println("long to vec is null");
+            return Vec3.ZERO;
+        }
+        System.out.println("long to vec is NOT null");
+        System.out.println(regionWind.get(windRegion.toLong()));
         return regionWind.get(windRegion.toLong());
+        //return regionWind.getOrDefault(windRegion.toLong(), Vec3.ZERO);
     }
 
     @Override
@@ -44,21 +52,23 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
             int minZ = blockPos.getZ();
             int maxX = minX + WindRegion.boxSize;
             int maxZ = minZ + WindRegion.boxSize;
+            long regionKey = windRegion.toLong();
+
+            Vec3 vec = new Vec3(Math.random() * 100, 0, Math.random() * 100);
+            regionWind.put(regionKey, vec);
         });
     }
 
     @Override
     public void addLoaded(WindRegion windRegion) {
-        // update for individual chunk?
-//        double x = Math.random();
-//        double z = Math.random();
-//        Vec3 vec = new Vec3(x, 0, z);
-//        regionWind.put(value, vec);
-        int loadedNum = regionLoadedness.getOrDefault(windRegion, 0);
-        regionLoadedness.put(windRegion, loadedNum + 1);
+        int loadedNum = regionLoadedNumber.getOrDefault(windRegion, 0);
+        regionLoadedNumber.put(windRegion, loadedNum + 1);
         if (loadedNum == 0){
             // updateRegion(windRegion)
             loadedRegions.add(windRegion);
+            Vec3 vec = new Vec3(Math.random() * 100, 0, Math.random() * 100);
+            long regionKey = windRegion.toLong();
+            regionWind.put(regionKey, vec);
         }
     }
 
@@ -66,8 +76,8 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
     public void removeLoaded(WindRegion windRegion) {
         // region with 1 load will go to 0 (nothing loading it)
         // region with 2 loads (eg spanning 2 chunks) will go to 1
-        int loadedNum = regionLoadedness.getOrDefault(windRegion, 0);
-        regionLoadedness.put(windRegion, Math.max(0, loadedNum - 1));
+        int loadedNum = regionLoadedNumber.getOrDefault(windRegion, 0);
+        regionLoadedNumber.put(windRegion, Math.max(0, loadedNum - 1));
         if (loadedNum - 1 == 0){
             loadedRegions.remove(windRegion);
         }
