@@ -5,12 +5,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +26,7 @@ public class ChunkEvents {
 
     // what to do about biomes on chunk boundaries??
     @SubscribeEvent
-    public static void ChunkLoadEventLOLE(ChunkEvent.Load event) {
+    public static void SoilChunkLoading(ChunkEvent.Load event) {
         // maybe add chunk blending between values
         LevelChunk chunk = (LevelChunk) event.getChunk();
         BlockPos pos = chunk.getPos().getWorldPosition();
@@ -47,64 +44,13 @@ public class ChunkEvents {
                         // todo test which one is necessary if either
                         //event.getChunk().setUnsaved(true);
                         chunk.setUnsaved(true);
-
                     }
                 });
             });
         }
     }
 
-    @SubscribeEvent
-    public static void ChunkLoadEventWind(ChunkEvent.Load event){
-        //System.out.println("chunk start loading");
-        LevelChunk chunk = (LevelChunk) event.getChunk();
-        //BlockPos pos = chunk.getPos().getWorldPosition();
-        Level level = (Level) event.getLevel();
-//        int box = WindRegion.getBoxSize();
-//        int m = chunk.getPos().x;
-//        int n = chunk.getPos().z;
-//
-//        int worldChunkX = 16 * m;
-//        int worldChunkZ = 16 * n;
-//
-//        int blackX = (int) (Math.ceil( (float) worldChunkX / box) * box);
-//        int blackZ = (int) (Math.ceil( (float) worldChunkZ / box) * box);
-//
-//
-//        for (int i = blackX; i >= worldChunkX && i <= worldChunkX + 16; i = i + box) {
-//            for (int j = blackZ; j >= worldChunkZ && j <= worldChunkZ + 16; j = j + box) {
-//                System.out.println(i + " , " + j);
-//                WindRegion windRegion = new WindRegion(i ,j);
-//                level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-//                    data.addLoaded(windRegion);
-//                });
-//            }
-//        }
 
-        WindRegionLoading(level, chunk, true);
-
-//        if (blackX > worldChunkX && blackX < worldChunkX + 16
-//        && blackZ > worldChunkZ && blackZ < worldChunkZ + 16){
-//
-//            //blackX = (int) (blackX + box);
-//            //blackZ = (int) (blackZ + box);
-//        }
-        //System.out.println("chunk finished loading");
-    }
-
-    @SubscribeEvent
-    public static void ChunkUnloadEventWind(ChunkEvent.Unload event){
-//        LevelChunk chunk = (LevelChunk) event.getChunk();
-//        BlockPos pos = chunk.getPos().getWorldPosition();
-//        WindRegion windRegion = WindRegion.fromBlockPos(pos);
-//        Level level = (Level) event.getLevel();
-//        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-//            data.removeLoaded(windRegion.toLong());
-//        });
-        LevelChunk chunk = (LevelChunk) event.getChunk();
-        Level level = (Level) event.getLevel();
-        WindRegionLoading(level, chunk, false);
-    }
 
     static int timer = 0;
     @SubscribeEvent
@@ -122,55 +68,7 @@ public class ChunkEvents {
         }
     }
 
-//    static int timer2 = 0;
-//    @SubscribeEvent
-//    public static void playertick(TickEvent.PlayerTickEvent event){
-//        timer2 ++;
-//        if (timer2 < 20){
-//            return;
-//        }
-//        timer2 = 0;
-//        Player player = event.player;
-//        Level level = player.level();
-//        if (level.isClientSide()) return;
-//        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-//            Vec3 vec = data.getWindAt(player.blockPosition());
-//            //player.move(MoverType.PLAYER, vec);
-//            //player.travel();
-//            //player.push(vec.x, 0 , vec.y);
-//            System.out.println("player push vec: " + vec);
-//            player.setDeltaMovement(vec);
-//            //player.addDeltaMovement(vec);
-//            //System.out.println(vec.x + "," + vec.z);
-//        });
-//    }
 
-    static void WindRegionLoading(Level level, LevelChunk chunk, boolean Loaded){
-        int box = WindRegion.boxSize;
-        int m = chunk.getPos().x;
-        int n = chunk.getPos().z;
 
-        int worldChunkX = 16 * m;
-        int worldChunkZ = 16 * n;
 
-        int blackX = (int) (Math.ceil( (float) worldChunkX / box) * box);
-        int blackZ = (int) (Math.ceil( (float) worldChunkZ / box) * box);
-
-        // first one is >= so it INCLUDES the left of the chunk, such as including 0
-        // second one is just < so it DOESNT include the right of the chunk, so theres no overlap
-        for (int i = blackX; i >= worldChunkX && i < worldChunkX + 16; i = i + box) {
-            for (int j = blackZ; j >= worldChunkZ && j < worldChunkZ + 16; j = j + box) {
-                //System.out.println(i + " , " + j);
-                //if (!Loaded) System.out.println("unloaded " + i + "," + j + " at chunk " + m + "," + n);
-                WindRegion windRegion = new WindRegion(i ,j);
-                level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
-                    if (Loaded) {
-                        data.addLoaded(windRegion);
-                    }
-                    else data.removeLoaded(windRegion);
-                });
-            }
-        }
-
-    }
 }

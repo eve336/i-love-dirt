@@ -1,9 +1,9 @@
 package org.eve.i_love_soil.common;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import com.teamresourceful.resourcefullib.common.lib.Constants;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -23,7 +23,7 @@ public class ILSCropData extends SimpleJsonResourceReloadListener {
     private static final Map<ResourceKey<Block>, CropData> CROP_DATA_MAP = new HashMap<>();
     //public static final Gson GSON = new GsonBuilder().create();
     public ILSCropData() {
-        super(Constants.GSON, "crop_data");
+        super(new Gson(), "crop_data");
     }
 
     @Override

@@ -54,7 +54,7 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
             int maxZ = minZ + WindRegion.boxSize;
             long regionKey = windRegion.toLong();
 
-            Vec3 vec = new Vec3(Math.random() * 100, 0, Math.random() * 100);
+            Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
             regionWind.put(regionKey, vec);
         });
     }
@@ -66,7 +66,7 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
         if (loadedNum == 0){
             // updateRegion(windRegion)
             loadedRegions.add(windRegion);
-            Vec3 vec = new Vec3(Math.random() * 100, 0, Math.random() * 100);
+            Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
             long regionKey = windRegion.toLong();
             regionWind.put(regionKey, vec);
         }

@@ -2,7 +2,6 @@ package org.eve.i_love_soil.common;
 
 import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
-import com.teamresourceful.resourcefullib.common.lib.Constants;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -20,7 +19,7 @@ public class ILSBiomeData extends SimpleJsonResourceReloadListener {
     private static final Map<ResourceKey<Biome>, BiomeStats> BIOME_STATS_MAP = new HashMap<>();
     //public static final Gson GSON = new GsonBuilder().create();
     public ILSBiomeData() {
-        super(Constants.GSON, "biome_stats");
+        super(new Gson(), "biome_stats");
     }
 
     @Override
