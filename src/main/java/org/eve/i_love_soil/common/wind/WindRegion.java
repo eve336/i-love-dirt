@@ -1,7 +1,6 @@
 package org.eve.i_love_soil.common.wind;
 
 import net.minecraft.core.BlockPos;
-import org.openjdk.nashorn.internal.objects.annotations.Getter;
 
 public class WindRegion {
     // wind region coords
@@ -24,7 +23,7 @@ public class WindRegion {
         return new WindRegion(pos.getX(), pos.getZ());
     }
 
-    public long toLong() {
+    public long ObjectToLong() {
         // bitwise or
         // returns 1 if either bit is 0 or 1, else 0
         // bitwise and
@@ -33,6 +32,11 @@ public class WindRegion {
         //return (((long) rx) << 32) | (rz & 0xFFFFFFFFL);
 
         return (long)rx & 4294967295L | ((long)rz & 4294967295L) << 32;
+    }
+
+    // this should make it so im not making a new object every single time i want to make a long for retrieving a region
+    public static long XZToLong(int x, int z){
+        return (long)x & 4294967295L | ((long)z & 4294967295L) << 32;
     }
 
     public BlockPos blockPos(){

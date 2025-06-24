@@ -1,16 +1,23 @@
 package org.eve.i_love_soil.common.wind;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.eve.i_love_soil.Config;
 import org.eve.i_love_soil.ILoveSoil;
 import org.eve.i_love_soil.capabilities.ILSCapabilities;
+
+import static org.eve.i_love_soil.Config.playerWindMagnitude;
 
 @Mod.EventBusSubscriber(modid = ILoveSoil.MODID)
 public class WindEventsHandler {
@@ -28,11 +35,14 @@ public class WindEventsHandler {
         Level level = player.level();
         if (!level.isClientSide()) return;
         //event.player.addDeltaMovement(new Vec3(0, 1, 0));
+        // why does this work???? Why does the level have the
         level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(data -> {
             Vec3 vec = data.getWindAt(player.blockPosition());
-            System.out.println("player push vec: " + vec);
+            //System.out.println("player push vec: " + vec);
             // add config
-            if (player.getDeltaMovement().length() > 0.1 || !player.onGround()) player.addDeltaMovement(vec.multiply(0.2, 0, 0.2));
+            // add config for min speed, vec multiplier, and whether it pushes you in creative flight
+            if (player.getAbilities().flying && !Config.creativeFlightWind) return;
+            if (player.getDeltaMovement().length() > 0.1 || !player.onGround()) player.addDeltaMovement(vec.multiply(playerWindMagnitude, 0, playerWindMagnitude));
         });
     }
 

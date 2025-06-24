@@ -26,22 +26,13 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
     // might be a good idea to store this somewhere else but this is convenient
     List<WindRegion> loadedRegions = new ArrayList<>();
 
+    // i can probably remove this because of the loading system im using
     Map<WindRegion, Integer> regionLoadedNumber = new HashMap<>();
 
     // useful for when you know the coords and want to get the wind, say to apply to a player, or to leaves
     @Override
     public Vec3 getWindAt(BlockPos blockPos) {
-        //WindRegion windRegion = WindRegion.fromBlockPos(blockPos);
-        WindRegion windRegion = new WindRegion(blockPos.getX(), blockPos.getZ());
-        var longey = windRegion.toLong();
-        if (regionWind.get(windRegion.toLong()) == null) {
-            System.out.println("long to vec is null");
-            return Vec3.ZERO;
-        }
-        System.out.println("long to vec is NOT null");
-        System.out.println(regionWind.get(windRegion.toLong()));
-        return regionWind.get(windRegion.toLong());
-        //return regionWind.getOrDefault(windRegion.toLong(), Vec3.ZERO);
+        return regionWind.getOrDefault(WindRegion.XZToLong(blockPos.getX(), blockPos.getZ()), Vec3.ZERO);
     }
 
     @Override
@@ -52,10 +43,14 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
             int minZ = blockPos.getZ();
             int maxX = minX + WindRegion.boxSize;
             int maxZ = minZ + WindRegion.boxSize;
-            long regionKey = windRegion.toLong();
+            long regionKey = windRegion.ObjectToLong();
 
-            Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
-            regionWind.put(regionKey, vec);
+            double magnitude = Math.random() * 0.1;
+            double angle = Math.random() * 2 * Math.PI;
+            Vec3 vec3 = new Vec3(magnitude * Math.cos(angle), 0, magnitude * Math.sin(angle));
+
+            //Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
+            regionWind.put(regionKey, vec3);
         });
     }
 
@@ -66,9 +61,13 @@ public class WindHandler implements IWindCapability, ICapabilitySerializable<Com
         if (loadedNum == 0){
             // updateRegion(windRegion)
             loadedRegions.add(windRegion);
-            Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
-            long regionKey = windRegion.toLong();
-            regionWind.put(regionKey, vec);
+            //Vec3 vec = new Vec3(Math.random() * 0.1, 0, Math.random() * 0.1);
+            double magnitude = Math.random() * 0.1;
+            double angle = Math.random() * 2 * Math.PI;
+            Vec3 vec3 = new Vec3(magnitude * Math.cos(angle), 0, magnitude * Math.sin(angle));
+
+            long regionKey = windRegion.ObjectToLong();
+            regionWind.put(regionKey, vec3);
         }
     }
 

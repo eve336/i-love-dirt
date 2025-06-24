@@ -61,7 +61,7 @@ public class CropEventHandler {
                 double multiplier = 0.01f;
                 double x = nutrients * multiplier;
                 double cropGrowChance = -Math.exp(-x - a) + b;
-                System.out.println(cropGrowChance);
+                //System.out.println(cropGrowChance);
                 if (random.nextDouble() < cropGrowChance) {
                     event.setResult(Event.Result.DEFAULT);
                     if (event.getResult() == Event.Result.ALLOW) {

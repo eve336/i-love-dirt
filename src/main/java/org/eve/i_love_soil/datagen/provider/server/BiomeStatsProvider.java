@@ -26,7 +26,6 @@ public class BiomeStatsProvider extends ModCodecProvider<BiomeStats> {
     @Override
     protected void build(BiConsumer<ResourceLocation, BiomeStats> consumer) {
         // maybe make it slightly acidic, idk probably just make it whatever for gameplay reasons
-        System.out.println(DESERT.location().getPath());
         // deserts
         // minWater content is soil minWater content, taiga has a load bc of soil stuff
         List<ResourceKey<Biome>> desertList = List.of(DESERT, BADLANDS, ERODED_BADLANDS);
