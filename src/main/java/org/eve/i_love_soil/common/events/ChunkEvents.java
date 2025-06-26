@@ -49,26 +49,4 @@ public class ChunkEvents {
             });
         }
     }
-
-
-
-    static int timer = 0;
-    @SubscribeEvent
-    public static void Servertick(TickEvent.ServerTickEvent event){
-        timer ++;
-        // 500 seconds
-        if (timer < 10000){
-            return;
-        }
-        timer = 0;
-        MinecraftServer server = event.getServer();
-        ServerLevel level = server.getLevel(ServerLevel.OVERWORLD);
-        if(level != null) {
-            level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(IWindCapability::updateWind);
-        }
-    }
-
-
-
-
 }

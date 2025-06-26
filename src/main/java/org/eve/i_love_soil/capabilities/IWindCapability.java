@@ -19,4 +19,6 @@ public interface IWindCapability {
     void addLoaded(WindRegion windRegion);
 
     void removeLoaded(WindRegion windRegion);
+
+    void removeAllLoaded();
 }

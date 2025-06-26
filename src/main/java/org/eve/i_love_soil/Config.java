@@ -18,11 +18,9 @@ import java.util.stream.Collectors;
 public class Config {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER.comment("Whether to log the dirt block on common setup").define("logDirtBlock", true);
+    private static final ForgeConfigSpec.IntValue WIND_REGION_SIZE = BUILDER.comment("The size of the side length of the wind regions").defineInRange("windRegionSize", 5, 1, 100);
 
     private static final ForgeConfigSpec.BooleanValue CREATIVE_FLIGHT_WIND = BUILDER.comment("Whether to push players in creative flight with wind").define("creativeFlightWind", false);
-
-    private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER.comment("A magic number").defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
 
     private static final ForgeConfigSpec.DoubleValue PLAYER_WIND_MAGNITUDE = BUILDER.comment("The amount the player is pushed around by wind").defineInRange("playerWindMagnitude", 0.165, 0, 1);
 
@@ -33,13 +31,11 @@ public class Config {
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
-    public static boolean logDirtBlock;
-    public static int magicNumber;
-    public static String magicNumberIntroduction;
     public static Set<Item> items;
 
     public static boolean creativeFlightWind;
     public static double playerWindMagnitude;
+    public static int windRegionSize;
 
     private static boolean validateItemName(final Object obj) {
         return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
@@ -47,14 +43,12 @@ public class Config {
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        logDirtBlock = LOG_DIRT_BLOCK.get();
-        magicNumber = MAGIC_NUMBER.get();
-        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
 
         // convert the list of strings into a set of items
         items = ITEM_STRINGS.get().stream().map(itemName -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName))).collect(Collectors.toSet());
 
         creativeFlightWind = CREATIVE_FLIGHT_WIND.get();
         playerWindMagnitude = PLAYER_WIND_MAGNITUDE.get();
+        windRegionSize = WIND_REGION_SIZE.get();
     }
 }

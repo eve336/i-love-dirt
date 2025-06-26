@@ -1,5 +1,7 @@
 package org.eve.i_love_soil.common.wind;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -11,11 +13,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.eve.i_love_soil.Config;
 import org.eve.i_love_soil.ILoveSoil;
 import org.eve.i_love_soil.capabilities.ILSCapabilities;
+import org.eve.i_love_soil.capabilities.IWindCapability;
 
 import static org.eve.i_love_soil.Config.playerWindMagnitude;
 
@@ -46,6 +50,22 @@ public class WindEventsHandler {
         });
     }
 
+    static int timer = 0;
+    @SubscribeEvent
+    public static void Servertick(TickEvent.ServerTickEvent event){
+        timer ++;
+        if (timer < 20){
+            return;
+        }
+        timer = 0;
+        MinecraftServer server = event.getServer();
+        ServerLevel level = server.getLevel(ServerLevel.OVERWORLD);
+        if(level != null) {
+            level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(IWindCapability::updateWind);
+        }
+    }
+
+    // these might be causing some issues, these might be giving client level, i might need to change it to only take server level idk
     @SubscribeEvent
     public static void ChunkLoadEventWind(ChunkEvent.Load event){
         LevelChunk chunk = (LevelChunk) event.getChunk();
@@ -59,6 +79,14 @@ public class WindEventsHandler {
         Level level = (Level) event.getLevel();
         WindRegionLoading(level, chunk, false);
     }
+
+//    @SubscribeEvent
+//    public static void WorldUnload(LevelEvent.Unload event){
+//        Level level = (Level) event.getLevel();
+//        level.getCapability(ILSCapabilities.WIND_CAPABILITY).ifPresent(
+//                IWindCapability::removeAllLoaded
+//        );
+//    }
 
     static void WindRegionLoading(Level level, LevelChunk chunk, boolean Loaded){
         int box = WindRegion.boxSize;
